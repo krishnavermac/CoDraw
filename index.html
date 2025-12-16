@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CoDraw — Pro Whiteboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="brand">🟦 CoDraw <span id="roomIdLabel" class="room-label"></span></div>
+    <div class="top-actions">
+      <button id="shareBtn" class="btn">Share board</button>
+      <button id="clearBtnTop" class="btn">Clear</button>
+    </div>
+  </div>
+
+  <div class="leftbar">
+    <button class="tool-btn" data-tool="pen" title="Pen">✏️</button>
+    <button class="tool-btn" data-tool="eraser" title="Eraser">🧽</button>
+    <button class="tool-btn" data-tool="rect" title="Rectangle">▭</button>
+    <button class="tool-btn" data-tool="circle" title="Circle">◯</button>
+    <button class="tool-btn" data-tool="line" title="Line">⤡</button>
+    <button class="tool-btn" data-tool="pan" title="Hand / Pan">✋</button>
+
+    <div class="separator"></div>
+
+    <input type="color" id="colorPicker" value="#111111" title="Color" />
+    <select id="brushSize" title="Brush size">
+      <option value="2">S</option>
+      <option value="4" selected>M</option>
+      <option value="8">L</option>
+      <option value="14">XL</option>
+    </select>
+
+    <div class="separator"></div>
+
+    <button id="undoBtn" title="Undo">↩️</button>
+    <button id="redoBtn" title="Redo">↪️</button>
+
+    <div class="separator"></div>
+
+    <div class="zoom-controls">
+      <button id="zoomOut" title="Zoom out">−</button>
+      <div id="zoomLabel">100%</div>
+      <button id="zoomIn" title="Zoom in">+</button>
+    </div>
+  </div>
+
+  <div id="canvasWrap">
+    <canvas id="board"></canvas>
+    <canvas id="overlay"></canvas>
+  </div>
+
+  <div id="cursors"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
