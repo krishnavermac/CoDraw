@@ -19,6 +19,7 @@ Text tool with editable text boxes
 
 Grid-based professional canvas
 
+
 🔄 **Collaboration**
 
 Real-time multi-user collaboration using WebSockets
@@ -26,6 +27,7 @@ Real-time multi-user collaboration using WebSockets
 Live cursor tracking for connected users
 
 Room-based collaboration using invite links
+
 
 🧠 **Canvas Engine (Pro-Level)**
 
@@ -38,6 +40,7 @@ Zoom in / out (mouse wheel + controls)
 Pan (hand tool) like Figma/Miro
 
 Accurate shape preview and rendering at any zoom level
+
 
 🛠️ **System**
 
@@ -61,6 +64,7 @@ Vanilla JavaScript
 
 Canvas API
 
+
 **Backend**
 
 Node.js
@@ -68,6 +72,7 @@ Node.js
 Express.js
 
 Socket.IO (real-time communication)
+
 
 
 **PROJECT STRUCTURE**
@@ -93,8 +98,9 @@ CoDraw/
 
 
 ▶️ **HOW TO RUN LOCALLY**
+
 1️⃣ Clone the repository
-git clone https://github.com/your-username/CoDraw.git
+git clone (https://github.com/krishnavermac/CoDraw)
 cd CoDraw
 
 2️⃣ Install dependencies
