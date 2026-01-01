@@ -4,7 +4,7 @@
 
 const socket = io();
 
-/* ---------- ROOM ---------- */
+/* room */
 function makeId(n=6){
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   return Array.from({length:n}).map(()=>chars[Math.floor(Math.random()*chars.length)]).join("");
@@ -18,7 +18,7 @@ if (!roomId) {
 document.getElementById("roomIdLabel").textContent = roomId;
 socket.emit("join", roomId);
 
-/* ---------- DOM ---------- */
+/* dom */
 const wrap = document.getElementById("canvasWrap");
 const board = document.getElementById("board");
 const overlay = document.getElementById("overlay");
@@ -37,7 +37,7 @@ const zoomOutBtn = document.getElementById("zoomOut");
 const toolButtons = document.querySelectorAll(".tool-btn");
 const cursorsContainer = document.getElementById("cursors");
 
-/* ---------- state ---------- */
+/* state */
 let scale = 1;
 let tx = 0, ty = 0;           // translation in screen pixels
 let tool = "pen";
@@ -50,7 +50,7 @@ let currentColor = colorPicker.value;
 let currentSize = parseInt(brushSize.value,10);
 let roomActions = [];         // last known actions from server
 
-/* ---------- resize ---------- */
+/* resize */
 function resize() {
   const w = wrap.clientWidth;
   const h = wrap.clientHeight;
@@ -63,7 +63,7 @@ function resize() {
 window.addEventListener("resize", resize);
 resize();
 
-/* ---------- transforms & coordinate helpers ---------- */
+/* transforms & coordinate helpers */
 function applyTransformTo(ctx) {
   ctx.setTransform(scale, 0, 0, scale, tx, ty);
 }
@@ -80,7 +80,7 @@ function worldToScreen(wx, wy) {
   return { x: wx * scale + tx, y: wy * scale + ty };
 }
 
-/* ---------- UI controls ---------- */
+/* UI controls */
 toolButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     toolButtons.forEach(b=>b.classList.remove("active"));
@@ -107,7 +107,7 @@ clearBtnTop.addEventListener("click", ()=>{
   socket.emit("clear");
 });
 
-/* ---------- zoom controls ---------- */
+/* zoom controls */
 function setScale(newScale, centerClientX=null, centerClientY=null) {
   if (centerClientX !== null && centerClientY !== null) {
     // zoom about pointer: compute world point then adjust tx/ty so world point stays under pointer
@@ -137,7 +137,7 @@ wrap.addEventListener("wheel", (e) => {
   setScale(scale * factor, e.clientX, e.clientY);
 }, { passive: false });
 
-/* ---------- drawing primitives ---------- */
+// drawing primitives 
 function drawStrokeLocal(stroke) {
   if (!stroke || !stroke.points) return;
   applyTransformTo(ctx);
@@ -195,7 +195,7 @@ function drawTextLocal(t) {
   resetTransform(ctx);
 }
 
-/* ---------- overlay preview ---------- */
+/* overlay preview */
 function clearOverlay() {
   octx.setTransform(1,0,0,1,0,0);
   octx.clearRect(0,0,overlay.width,overlay.height);
@@ -219,7 +219,7 @@ function previewShape(toolName, x0, y0, x1, y1) {
   // reset overlay transform not necessary (we clear before next preview)
 }
 
-/* ---------- text editor ---------- */
+/* text editor */
 function createTextEditor(worldX, worldY) {
   const wrapRect = wrap.getBoundingClientRect();
   const scr = worldToScreen(worldX, worldY);
@@ -256,7 +256,7 @@ function createTextEditor(worldX, worldY) {
   });
 }
 
-/* ---------- drawing / pointer handling ---------- */
+/* drawing / pointer handling */
 let lastPointer = null;
 wrap.addEventListener("pointerdown", (e) => {
   wrap.setPointerCapture?.(e.pointerId);
@@ -359,14 +359,14 @@ socket.emit("shape", shape);
   }
 });
 
-/* pointer leave => cancel */
+/* pointer leave -> cancel */
 wrap.addEventListener("pointerleave", () => {
   drawing = false;
   panning = false;
   clearOverlay();
 });
 
-/* ---------- socket handlers ---------- */
+/*  socket handlers */
 socket.on("draw", (seg) => drawSegmentLocal(seg));
 socket.on("stroke", (stroke) => {
   roomActions.push({ type: "stroke", payload: stroke });
@@ -396,11 +396,11 @@ socket.on("rebuild", (actions) => {
   redrawAll();
 });
 
-/* ---------- undo / redo ---------- */
+/* undo / redo */
 undoBtn.addEventListener("click", ()=> socket.emit("undo"));
 redoBtn.addEventListener("click", ()=> socket.emit("redo"));
 
-/* ---------- cursors ---------- */
+/* cursors */
 const remoteCursors = {};
 socket.on("cursor", (data) => {
   let el = remoteCursors[data.id];
@@ -420,7 +420,7 @@ socket.on("cursor-left", (d) => {
   if (el) { el.remove(); delete remoteCursors[d.id]; }
 });
 
-/* ---------- redraw helpers ---------- */
+/* redraw helpers */
 function redrawAll() {
   // clear and re-render roomActions with current transform
   ctx.setTransform(1,0,0,1,0,0);
@@ -434,5 +434,6 @@ function redrawAll() {
   clearOverlay();
 }
 
-/* ---------- initialization: request init if not received ---------- */
+/* initialization: request init if not received */
 setTimeout(()=> socket.emit("join", roomId), 150);
+
