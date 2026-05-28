@@ -96,6 +96,11 @@ CoDraw/
 └── README.md
 
 
+**SCREENSHOTS**
+<img width="1470" height="881" alt="Screenshot 2026-05-28 at 11 45 45 PM" src="https://github.com/user-attachments/assets/242f7255-845d-4369-bc9d-844b4da9642a" />
+<img width="1470" height="803" alt="Screenshot 2026-05-28 at 11 46 07 PM" src="https://github.com/user-attachments/assets/67f58359-6014-461a-9f90-9bf8dc81eb3f" />
+
+
 
 ▶️ **HOW TO RUN LOCALLY**
 
