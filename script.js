@@ -1,10 +1,5 @@
-/* CoDraw — script.js
-   Pro canvas: grouped strokes, shapes, text, zoom, pan, undo/redo, cursors, rooms
-*/
-
 const socket = io();
 
-/* room */
 function makeId(n=6){
   const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
   return Array.from({length:n}).map(()=>chars[Math.floor(Math.random()*chars.length)]).join("");
@@ -18,7 +13,6 @@ if (!roomId) {
 document.getElementById("roomIdLabel").textContent = roomId;
 socket.emit("join", roomId);
 
-/* dom */
 const wrap = document.getElementById("canvasWrap");
 const board = document.getElementById("board");
 const overlay = document.getElementById("overlay");
@@ -37,20 +31,18 @@ const zoomOutBtn = document.getElementById("zoomOut");
 const toolButtons = document.querySelectorAll(".tool-btn");
 const cursorsContainer = document.getElementById("cursors");
 
-/* state */
 let scale = 1;
-let tx = 0, ty = 0;           // translation in screen pixels
+let tx = 0, ty = 0;           
 let tool = "pen";
 let drawing = false;
 let panning = false;
 let panLast = null;
-let currentStroke = null;     // grouped stroke
+let currentStroke = null;     
 let start = null;
 let currentColor = colorPicker.value;
 let currentSize = parseInt(brushSize.value,10);
-let roomActions = [];         // last known actions from server
+let roomActions = [];         
 
-/* resize */
 function resize() {
   const w = wrap.clientWidth;
   const h = wrap.clientHeight;
@@ -58,12 +50,11 @@ function resize() {
   board.height = h;
   overlay.width = w;
   overlay.height = h;
-  redrawAll(); // redraw from roomActions
+  redrawAll();
 }
 window.addEventListener("resize", resize);
 resize();
 
-/* transforms & coordinate helpers */
 function applyTransformTo(ctx) {
   ctx.setTransform(scale, 0, 0, scale, tx, ty);
 }
@@ -80,7 +71,6 @@ function worldToScreen(wx, wy) {
   return { x: wx * scale + tx, y: wy * scale + ty };
 }
 
-/* UI controls */
 toolButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     toolButtons.forEach(b=>b.classList.remove("active"));
@@ -107,37 +97,31 @@ clearBtnTop.addEventListener("click", ()=>{
   socket.emit("clear");
 });
 
-/* zoom controls */
 function setScale(newScale, centerClientX=null, centerClientY=null) {
-  if (centerClientX !== null && centerClientY !== null) {
-    // zoom about pointer: compute world point then adjust tx/ty so world point stays under pointer
+  if (centerClientX !== null && centerClientY !== null) { 
     const r = wrap.getBoundingClientRect();
     const sx = centerClientX - r.left;
     const sy = centerClientY - r.top;
     const worldX = (sx - tx) / scale;
     const worldY = (sy - ty) / scale;
-    // apply scale change
     scale = Math.max(0.25, Math.min(4, newScale));
-    // compute new tx/ty so worldX/worldY maps to same screen pos
     tx = sx - worldX * scale;
     ty = sy - worldY * scale;
   } else {
     scale = Math.max(0.25, Math.min(4, newScale));
   }
   zoomLabel.textContent = Math.round(scale * 100) + "%";
-  redrawAll(); // redraw with new transform
+  redrawAll(); 
 }
 zoomInBtn?.addEventListener("click", ()=> setScale(scale * 1.2, wrap.clientWidth/2, wrap.clientHeight/2));
 zoomOutBtn?.addEventListener("click", ()=> setScale(scale / 1.2, wrap.clientWidth/2, wrap.clientHeight/2));
 
-// wheel zoom (centered on cursor)
 wrap.addEventListener("wheel", (e) => {
   e.preventDefault();
   const factor = e.deltaY < 0 ? 1.12 : 1/1.12;
   setScale(scale * factor, e.clientX, e.clientY);
 }, { passive: false });
 
-// drawing primitives 
 function drawStrokeLocal(stroke) {
   if (!stroke || !stroke.points) return;
   applyTransformTo(ctx);
@@ -195,14 +179,12 @@ function drawTextLocal(t) {
   resetTransform(ctx);
 }
 
-/* overlay preview */
 function clearOverlay() {
   octx.setTransform(1,0,0,1,0,0);
   octx.clearRect(0,0,overlay.width,overlay.height);
 }
 function previewShape(toolName, x0, y0, x1, y1) {
   clearOverlay();
-  // apply same transform as board so preview lines up
   octx.setTransform(scale,0,0,scale,tx,ty);
   octx.strokeStyle = currentColor;
   octx.lineWidth = currentSize;
@@ -216,10 +198,8 @@ function previewShape(toolName, x0, y0, x1, y1) {
   } else if (toolName === "line") {
     octx.beginPath(); octx.moveTo(x0,y0); octx.lineTo(x1,y1); octx.stroke();
   }
-  // reset overlay transform not necessary (we clear before next preview)
 }
 
-/* text editor */
 function createTextEditor(worldX, worldY) {
   const wrapRect = wrap.getBoundingClientRect();
   const scr = worldToScreen(worldX, worldY);
@@ -256,7 +236,6 @@ function createTextEditor(worldX, worldY) {
   });
 }
 
-/* drawing / pointer handling */
 let lastPointer = null;
 wrap.addEventListener("pointerdown", (e) => {
   wrap.setPointerCapture?.(e.pointerId);
@@ -284,7 +263,6 @@ wrap.addEventListener("pointerdown", (e) => {
 wrap.addEventListener("pointermove", (e) => {
   const p = screenToWorld(e.clientX, e.clientY);
 
-  // send cursor in world coords
   socket.emit("cursor", { x: p.x, y: p.y });
 
   if (panning && lastPointer) {
@@ -301,7 +279,6 @@ wrap.addEventListener("pointermove", (e) => {
 
   if (tool === "pen" || tool === "eraser") {
     currentStroke.points.push({ x: p.x, y: p.y });
-    // draw the most recent segment for smooth local feedback
     const len = currentStroke.points.length;
     if (len >= 2) {
       const a = currentStroke.points[len-2];
@@ -315,7 +292,7 @@ wrap.addEventListener("pointermove", (e) => {
         composite: currentStroke.tool === "eraser" ? "destination-out" : "source-over"
       };
       drawSegmentLocal(seg);
-      socket.emit("draw", seg); // live preview to others
+      socket.emit("draw", seg); 
     }
   } else if (tool === "rect" || tool === "circle" || tool === "line") {
     previewShape(tool, start.x, start.y, p.x, p.y);
@@ -359,21 +336,18 @@ socket.emit("shape", shape);
   }
 });
 
-/* pointer leave -> cancel */
 wrap.addEventListener("pointerleave", () => {
   drawing = false;
   panning = false;
   clearOverlay();
 });
 
-/*  socket handlers */
 socket.on("draw", (seg) => drawSegmentLocal(seg));
 socket.on("stroke", (stroke) => {
   roomActions.push({ type: "stroke", payload: stroke });
   drawStrokeLocal(stroke);
 });
 socket.on("shape", (s) => {
-  // prevent duplicate insert
   roomActions.push({ type: "shape", payload: s });
   redrawAll();
 });
@@ -396,11 +370,9 @@ socket.on("rebuild", (actions) => {
   redrawAll();
 });
 
-/* undo / redo */
 undoBtn.addEventListener("click", ()=> socket.emit("undo"));
 redoBtn.addEventListener("click", ()=> socket.emit("redo"));
 
-/* cursors */
 const remoteCursors = {};
 socket.on("cursor", (data) => {
   let el = remoteCursors[data.id];
@@ -420,9 +392,7 @@ socket.on("cursor-left", (d) => {
   if (el) { el.remove(); delete remoteCursors[d.id]; }
 });
 
-/* redraw helpers */
 function redrawAll() {
-  // clear and re-render roomActions with current transform
   ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0,0,board.width,board.height);
   roomActions.forEach(a => {
@@ -430,10 +400,7 @@ function redrawAll() {
     else if (a.type === "shape") drawShapeLocal(a.payload);
     else if (a.type === "text") drawTextLocal(a.payload);
   });
-  // clear overlay
   clearOverlay();
 }
 
-/* initialization: request init if not received */
 setTimeout(()=> socket.emit("join", roomId), 150);
-
