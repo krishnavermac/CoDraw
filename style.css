@@ -1,7 +1,6 @@
 * { box-sizing: border-box; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; }
 html,body { height:100%; margin:0; background:#f4f6f8; overflow:hidden; }
 
-/* Top Bar */
 .topbar {
   position:fixed; top:0; left:0; right:0; height:56px; background:#fff;
   display:flex; align-items:center; justify-content:space-between; padding:0 18px;
@@ -10,7 +9,6 @@ html,body { height:100%; margin:0; background:#f4f6f8; overflow:hidden; }
 .brand { font-weight:700; font-size:18px; display:flex; align-items:center; gap:12px; }
 .room-label { color:#6b7280; font-size:13px; }
 
-/* Left toolbar */
 .leftbar {
   position:fixed; left:18px; top:80px; display:flex; flex-direction:column; gap:10px;
   background:#fff; padding:12px; border-radius:12px; box-shadow:0 10px 26px rgba(0,0,0,0.12); z-index:40;
@@ -22,11 +20,9 @@ html,body { height:100%; margin:0; background:#f4f6f8; overflow:hidden; }
 .leftbar select { width:60px; height:40px; border-radius:8px; border:none; background:#f4f6f8; }
 .leftbar button { width:44px; height:44px; border-radius:8px; border:none; background:#f4f6f8; cursor:pointer; }
 
-/* canvas container */
 #canvasWrap { position:absolute; top:56px; left:0; right:0; bottom:0; overflow:hidden; box-shadow:inset 0 0 40px rgba(0,0,0,0.03); }
 canvas { position:absolute; top:0; left:0; transform-origin: 0 0; }
 
-/* board grid */
 #board {
   background-color:#fafafa;
   background-image:
@@ -36,10 +32,8 @@ canvas { position:absolute; top:0; left:0; transform-origin: 0 0; }
   cursor: crosshair;
 }
 
-/* overlay sits above board for previews */
 #overlay { pointer-events:none; z-index:30; }
 
-/* cursors container */
 #cursors { position:absolute; top:56px; left:0; right:0; bottom:0; pointer-events:none; z-index:50; }
 .remote-cursor {
   position:absolute;
@@ -62,11 +56,9 @@ canvas { position:absolute; top:0; left:0; transform-origin: 0 0; }
   color:#fff;
 }
 
-/* small responsive */
 @media (max-width:600px) {
   .leftbar { left:10px; top:72px; }
   .topbar { padding:0 10px; }
 }
 
-/* small helper buttons */
 .btn { background:#4262ff;color:white;border:none;padding:8px 10px;border-radius:6px;cursor:pointer;margin-left:8px; }
