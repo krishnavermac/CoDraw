@@ -42,15 +42,13 @@ CoDraw is a real-time collaborative whiteboard application that allows multiple 
 
 ## TECH STACK
 
-```
-| Layer | Technology |
-|--------|------------|
-| Frontend | HTML5, CSS3, Vanilla JavaScript |
-| Drawing Engine | Canvas API |
-| Backend | Node.js, Express.js |
-| Real-Time Communication | Socket.IO |
-| Version Control | Git & GitHub |
-```
+| Layer           | Technology                       |
+| --------------- | ---------------------------------| 
+| Backend         | Node.js, Express.                |
+| Drawing Engine  | Canvas API                       |
+| Real-Time Comm. | Socket.IO                        |     
+| Frontend        | HTML5, CSS3, Vanilla JavaScript  |
+| Version Control | Git & GitHub                     |
 
 **PROJECT STRUCTURE**
 
